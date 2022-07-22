@@ -1,12 +1,8 @@
 package pro.sky.cw2javaexam.service;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,7 +11,6 @@ import pro.sky.cw2javaexam.database.Question;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
 
@@ -32,10 +27,7 @@ public class TestExamineServiceImpl {
     private static final int VALID_PARAM_SEVEN = 7;
     private static final int VALID_PARAM_EIGHT = 8;
     private static final int VALID_PARAM_NINE = 9;
-
     private static final int NOT_VALID_PARAM_TEN = 10;
-
-    private Question questionMock;
 
     @Mock
     private JavaQuestionService javaQuestionService;
@@ -88,7 +80,7 @@ public class TestExamineServiceImpl {
 
     @Test
     public void testGetQuestions(){
-        int numberOfQuestions = 2;
+        int numberOfQuestions = VALID_PARAM_TWO;
         when(javaQuestionService.size()).thenReturn(qList.size());
         when(javaQuestionService.getRandomQuestion()).thenReturn(randomQuestion());
         List<Question> result = examineService.getQuestions(numberOfQuestions);
