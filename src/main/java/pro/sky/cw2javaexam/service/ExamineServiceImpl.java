@@ -18,7 +18,7 @@ public class ExamineServiceImpl implements ExamineService {
 
     @Override
     public List<Question> getQuestions(int amount) {
-        if(amount > questionService.size())
+        if(amount > questionService.size() || amount <= 0)
             throw new NotEnoughQuestionsException("There is not enough questions in the database to generate such " +
                     "number of examine tickets");
         List<Question> qList = new ArrayList<>(amount);

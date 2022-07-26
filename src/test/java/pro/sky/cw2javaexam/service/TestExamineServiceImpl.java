@@ -3,21 +3,25 @@ package pro.sky.cw2javaexam.service;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.cw2javaexam.database.Question;
+import pro.sky.cw2javaexam.exceptions.NotEnoughQuestionsException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TestExamineServiceImpl {
 
-    private static final int VALID_PARAM_ZERO = 0;
     private static final int VALID_PARAM_ONE = 1;
     private static final int VALID_PARAM_TWO = 2;
     private static final int VALID_PARAM_THREE = 3;
@@ -27,7 +31,12 @@ public class TestExamineServiceImpl {
     private static final int VALID_PARAM_SEVEN = 7;
     private static final int VALID_PARAM_EIGHT = 8;
     private static final int VALID_PARAM_NINE = 9;
-    private static final int NOT_VALID_PARAM_TEN = 10;
+    private static final int VALID_PARAM_TEN = 10;
+    private static final int NOT_VALID_PARAM_ZERO = 0;
+    private static final int NOT_VALID_PARAM_ELEVEN = 11;
+    private static final int NOT_VALID_PARAM_FIFTY = 50;
+
+
 
     @Mock
     private JavaQuestionService javaQuestionService;
@@ -78,24 +87,48 @@ public class TestExamineServiceImpl {
                             "классами и другими интерфейсами описывает различные структуры данных")
     ));
 
-    @Test
-    public void testGetQuestions(){
-        int numberOfQuestions = VALID_PARAM_TWO;
+    @ParameterizedTest
+    @MethodSource("provideRightParamsForTestGetQuestions")
+    public void testGetQuestions(int numberOfQuestions){
         when(javaQuestionService.size()).thenReturn(qList.size());
-        when(javaQuestionService.getRandomQuestion()).thenReturn(randomQuestion());
+        when(javaQuestionService.getRandomQuestion()).thenReturn(qList.get(0), qList.get(1), qList.get(2), qList.get(3),
+                qList.get(4), qList.get(5), qList.get(6), qList.get(7), qList.get(8), qList.get(9));
         List<Question> result = examineService.getQuestions(numberOfQuestions);
         Assertions.assertEquals(numberOfQuestions, result.size());
-        for(int i = 0; i < result.size(); i++){
-            for(int j = i+1; j < result.size(); j++)
+        for(int i = 0; i < result.size(); i++) {
+            for (int j = i + 1; j < result.size(); j++)
                 Assertions.assertNotEquals(result.get(i), result.get(j));
         }
-
     }
 
-    public Question randomQuestion(){
-        Random rand = new Random();
-        int randomIndex = rand.nextInt(qList.size());
-        return qList.get(randomIndex);
+    @ParameterizedTest
+    @MethodSource("provideWrongParamsForTestGetQuestions")
+    public void testGetQuestionsOnException(int numberOfQuestions){
+        Assertions.assertThrows(NotEnoughQuestionsException.class, () -> examineService.getQuestions(numberOfQuestions));
+    }
+
+    private static Stream<Arguments> provideRightParamsForTestGetQuestions(){
+        return Stream.of(
+                Arguments.of(VALID_PARAM_ONE),
+                Arguments.of(VALID_PARAM_TWO),
+                Arguments.of(VALID_PARAM_THREE),
+                Arguments.of(VALID_PARAM_FOUR),
+                Arguments.of(VALID_PARAM_FIVE),
+                Arguments.of(VALID_PARAM_SIX),
+                Arguments.of(VALID_PARAM_SEVEN),
+                Arguments.of(VALID_PARAM_EIGHT),
+                Arguments.of(VALID_PARAM_NINE),
+                Arguments.of(VALID_PARAM_TEN)
+
+        );
+    }
+
+    private static Stream<Arguments> provideWrongParamsForTestGetQuestions(){
+        return Stream.of(
+                Arguments.of(NOT_VALID_PARAM_ZERO),
+                Arguments.of(NOT_VALID_PARAM_ELEVEN),
+                Arguments.of(NOT_VALID_PARAM_FIFTY)
+        );
     }
 
 }
